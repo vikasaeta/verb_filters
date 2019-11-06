@@ -1,5 +1,7 @@
-# aspectual_verb_filters
-Each folder is dedicated to one aspectual verb and contains three files, for example:
+# verb_filters
+Each folder is dedicated to one group of verbs and contains seveal inner folders, one for each verb.
+Each inner folder contains three files. For example:
+
 
   filter_start.py
   
