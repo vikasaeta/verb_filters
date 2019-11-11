@@ -41,16 +41,22 @@ for s in range (1,len(lineList)):
     formlist = ['considered']
     
  
-    if not (containsPattern(my_split) or dobjIsGerund(my_split) or fl.hasGerundAfter(my_split, my_tokens) or beConsidered(my_split, my_tokens) or (my_tokens[int(my_split[5])+1].lower() == 'that' and tagged_tokens[int(my_split[5])+1][1] == 'IN') or fl.isAdjective(my_split, my_tokens,tagged_tokens, formlist) or my_split[2] in ['Considered'] or tagged_tokens[int(my_split[3])+1][1].startswith(('JJ','DT','VBN')) or (tagged_tokens[int(my_split[3])+1][1].startswith('RB') and tagged_tokens[int(my_split[3])+2][1].startswith(('JJ','VBN'))) or (not tagged_tokens[int(my_split[3])][1].startswith('NN')) or my_split[5] == "0" or my_split[1].lower() in ['matter','fact','possibility','issue','idea']):
+    if not (containsPattern(my_split) or dobjIsGerund(my_split) or fl.hasGerundAfter(my_split, my_tokens) or beConsidered(my_split, my_tokens) or (my_tokens[int(my_split[5])+1].lower() in ['that','what'] and tagged_tokens[int(my_split[5])+1][1] == 'IN') or fl.isAdjective(my_split, my_tokens,tagged_tokens, formlist) or my_split[2] in ['Considered'] or tagged_tokens[int(my_split[3])+1][1].startswith(('JJ','DT','VBN')) or (tagged_tokens[int(my_split[3])+1][1].startswith('RB') and tagged_tokens[int(my_split[3])+2][1].startswith(('JJ','VBN'))) or (not tagged_tokens[int(my_split[3])][1].startswith('NN')) or my_split[5] == "0" or my_split[1].lower() in ['matter','fact','possibility','issue','idea'] or tagged_tokens[int(my_split[3])+1][1] in ['VBP','VBP','VBZ']):
         
         filtered_lines.append(lineList[s])
     
 
 
-sampleNumbers = random.sample(range(1, len(filtered_lines)), 100)
-for s in range (len(filtered_lines)):
-    if s in sampleNumbers:
-        f.write(filtered_lines[s])
+n = 0
+sampled_numbers = []
+while n < 100:        
+    s = random.randint(1, len(filtered_lines))
+    if not s in sampled_numbers:
+        sampled_numbers.append(s)        
+        my_split = filtered_lines[s].split('\t')
+        if not (fl.verbHasXcomp(my_split) or fl.verbHasWrongIobj(my_split)):
+                f.write(filtered_lines[s]) 
+                n = n+1 
     
 f.close()
 

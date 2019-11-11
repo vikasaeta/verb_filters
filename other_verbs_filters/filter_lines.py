@@ -2,6 +2,44 @@
 import random
 import re
 import nltk
+import stanfordnlp
+stanfordnlp.download('en')   # This downloads the English models for the neural pipeline
+nlp = stanfordnlp.Pipeline() # This sets up a default neural pipeline in English
+
+#builds lists of dependency relations and governers of the tokens in the sentence
+def dep_lists(my_split):    
+    doc = nlp(my_split[7])
+    dep_rels = []
+    governors = []    
+    for word in doc.sentences[0].words:
+        dep_rels.append(word.dependency_relation)
+        governors.append(word.governor)    
+    return(dep_rels,governors)
+    
+#filters cases like "I want him to go ."    
+def verbHasXcomp(my_split):
+    v_index = int(my_split[5])+1    
+    dep_rels,governors = dep_lists(my_split)
+    if 'xcomp' in dep_rels[v_index:]:        
+        for x in range(v_index,len(dep_rels)):
+            if dep_rels[x] == 'xcomp' and governors[x] == v_index:
+                print(my_split[7])
+                return(True)
+    return(False)
+    
+
+def verbHasWrongIobj(my_split):
+    v_index = int(my_split[5])+1
+    n_index = int(my_split[3])+1
+    if (n_index > v_index):#not passive voice    
+        dep_rels,governors = dep_lists(my_split)
+        if 'iobj' in dep_rels[v_index:(n_index-1)]:        
+            for x in range(v_index,len(dep_rels)):
+                if dep_rels[x] == 'iobj' and governors[x] == v_index:
+                    print(my_split[7])
+                    return(True)
+    return(False)
+
 # filters the cases where the "dobj" is in reality a gerund, e.g. "And Isaac pitched his tent there and his servants began digging a well ."
 def dobjIsGerund(my_split):
     if(my_split[1].endswith('ing') and (my_split[1].lower() not in ['everything','anything','something','nothing'])and (int(my_split[3]) - int(my_split[5]) == 1)):        
